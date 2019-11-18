@@ -1,0 +1,31 @@
+Chosen programming language:
+Python for ease of string parsing and regex matching
+
+Regex:
+integer: matches "0" OR optional sign followed by at least a non-zero digit, ending with any number of digits
+	^([-+]?[1-9][0-9]*$)|0$
+identifier: matches strings starting with a letter (lower/upper case) followed by at most other 7 letters or digits
+	^[a-zA-Z][a-zA-Z0-9]{0,7}$
+string: matches any number of letter and digits enclosed in "'"
+	^'[a-zA-Z0-9]*'$
+ArrayList: matches any number of either only strings or integers enclosed in "[]" and each separated by ","
+	^\[('[a-zA-Z0-9]*'(,'[a-zA-Z0-9]*')*)?\]$|^\[((([-+]?[1-9][0-9]*)|0)(,((([-+]?[1-9][0-9]*)|0))*)?\]$
+
+Data structures:
+PIF uses a simple list having (token code, position in ST) pairs as elements. List was chosen for the ease of adding and storing the pairs in the order they were found.
+Codification table uses a dictionary having (token, code) key-value pairs.
+ST uses a hash table with chaining for collision resolution.
+
+The Analyze method:
+The main method of the scanner is a static method named analyze that takes the filename of the input file as a parameter and returns the PIF, ST, and an error string which will be empty if no lexical errors were found.
+Analyze steps:
+for each line in the file:
+	split the line by separators and operators, without removing them
+	for each token resulting from the split:
+		remove line ends (/n) and ignore empty tokens (produced by 2 consecutive separators i.e. ", ")
+		try to match the token as a keyword/separator/operator and add it to PIF with -1 for ST pos if successful
+		else try to match it as an identifier and add it to ST then PIF if successful
+		else try to match it as integer and add it to ST and PIF if successful
+		else try to match it as string or ArrayList and add it to ST and PIF if successful
+		else the token does not match anything hence it is a lexical error and it is added to the error string
+the method returns the error string, PIF and ST

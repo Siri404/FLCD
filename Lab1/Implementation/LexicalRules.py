@@ -1,0 +1,11 @@
+non_zero = "[1-9]"
+digit = "[0-9]"
+letter = "[a-zA-Z]"
+identifier = "^[a-zA-Z][a-zA-Z0-9]{0,7}$"
+integer = "^([-+]?" + non_zero + digit + "*$)|0$"
+string = "^'[a-zA-Z0-9]*'$"
+ArrayList ="^\[('[a-zA-Z0-9]*'(,'[a-zA-Z0-9]*')*)?\]$|^\[((([-+]?" + non_zero + digit + "*)|0)(,(([-+]?" + non_zero + \
+           digit + "*)|0))*)?\]$"
+separators = "[() {},;[\]]|\+|-|\*|/|<=|==|>=|!=|=|<|>"
+keywords = "^(while|if|else|int|string|ArrayList|read|write|~Start|~End)$"
+operators = "^\+|-|\*|/|<=|==|>=|!=|=|<|>|and|or$"

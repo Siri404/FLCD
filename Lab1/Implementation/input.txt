@@ -1,0 +1,6 @@
+~Start
+int a, string s, ArrayList<int> array;
+read a;
+s='asset';
+if(a>= 0){write s;}
+~End
