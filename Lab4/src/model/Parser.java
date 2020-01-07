@@ -28,13 +28,18 @@ public class Parser {
             notDone = false;
             for (int i = 0; i < closure.size(); i++) {
                 Production p = closure.get(i);
-                int pointIndex = p.getRhs().indexOf('.');
-                if (pointIndex != p.getRhs().length() - 1) {
-                    String elem = "" + p.getRhs().charAt(pointIndex + 1);
+                Map.Entry<List<String>, Integer> entry = p.getRhs().entrySet().iterator().next();
+                int pointIndex = entry.getValue();
+                if (pointIndex != entry.getKey().size()) {
+                    String elem = entry.getKey().get(pointIndex);
                     for (Production prod : grammar.getProductions()) {
                         if (elem.equals(prod.getLhs())) {
                             //add the point at the beginning
-                            Production newProd = new Production(prod.getLhs(), "." + prod.getRhs());
+
+                            Map<List<String>, Integer> map = new HashMap<>();
+                            map.put(entry.getKey(), 0);
+                            Production newProd = new Production(prod.getLhs(), map);
+                            entry.setValue(0);
                             if (!closure.contains(newProd)) {
                                 closure.add(newProd);
                                 notDone = true;
@@ -49,14 +54,12 @@ public class Parser {
 
     private List<Production> goTo(List<Production> s, String element) throws ParserException {
         for (Production production : s) {
-            int pointIndex = production.getRhs().indexOf('.');
-            if (production.getRhs().indexOf(element) == pointIndex + 1) {
-                String newRhs = production.getRhs();
-
+            Map.Entry<List<String>, Integer> entry = production.getRhs().entrySet().iterator().next();
+            Integer pointIndex = entry.getValue();
+            if (entry.getKey().indexOf(element) == pointIndex) {
                 //move the point
-                newRhs = newRhs.substring(0, pointIndex) + element + "." + newRhs.substring(pointIndex + element.length() + 1);
-
-                return closure(new Production(production.getLhs(), newRhs));
+                entry.setValue(entry.getValue() + 1);
+                return closure(production);
             }
         }
         throw new ParserException("Invalid element passed to toGo function!");
@@ -67,7 +70,6 @@ public class Parser {
         List<List<Production>> states = new ArrayList<>();
         //initialize s0
         Production initialProd = grammar.getProductions().get(grammar.getProductions().size() - 1);
-        initialProd.setRhs("." + initialProd.getRhs());
         List<Production> s0 = closure(initialProd);
         states.add(s0);
         boolean notDone = true;
@@ -127,10 +129,10 @@ public class Parser {
             List<Production> state = states.get(i);
             String action = "";
             for (Production production : state) {
-                String rhs = production.getRhs();
-                int pointIndex = rhs.indexOf(".");
+                Map.Entry<List<String>, Integer> entry = production.getRhs().entrySet().iterator().next();
+                int pointIndex = entry.getValue();
                 //point before terminal/nonterminal
-                if (pointIndex != rhs.length() - 1) {
+                if (pointIndex != entry.getKey().size() - 1) {
                     //check for conflict
                     if (!action.equals("") && !action.equals("shift")) {
                         throw new ParserException("shift conflict!");
@@ -139,7 +141,6 @@ public class Parser {
                 }
                 //point at the end
                 else {
-                    rhs = rhs.substring(0, rhs.length() - 1);
                     //check accept
                     if (production.getLhs().equals(grammar.getTemporaryStartingSymbol())) {
                         //check for conflict
@@ -152,7 +153,7 @@ public class Parser {
                     else {
                         //find production number for reduce
                         for (int j = 0; j < grammar.getProductions().size() - 1; j++) {
-                            if (rhs.equals(grammar.getProductions().get(j).getRhs())
+                            if (entry.getKey().equals(grammar.getProductions().get(j).getRhs())
                                     && production.getLhs().equals(grammar.getProductions().get(j).getLhs())) {
                                 //check for conflict
                                 if (!action.equals("") && !action.equals("reduce" + (j + 1))) {
@@ -192,7 +193,7 @@ public class Parser {
                 output.append(" => ").append(workingStack);
             } else if (action.contains("reduce")) {
                 Production production = grammar.getProductions().get(Integer.parseInt(String.valueOf(action.charAt(action.length() - 1))) - 1);
-                int tokensToRemove = production.getRhs().length() * 2;
+                int tokensToRemove = production.getRhs().keySet().iterator().next().size() * 2;
                 workingStack = workingStack.substring(0, workingStack.length() - tokensToRemove);
                 if (workingStack.charAt(workingStack.length() - 1) == '$') {
                     throw new ParserException("Sequence rejected");

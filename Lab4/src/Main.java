@@ -20,7 +20,7 @@ public class Main {
             });
             System.out.println();
         }
-        String output = parser.parse("abbabc");
+        String output = parser.parse("abbbc");
         System.out.print("accepted: ");
         System.out.println(output);
     }

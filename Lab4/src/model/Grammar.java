@@ -21,7 +21,9 @@ public class Grammar {
         //enrich the grammar
         temporaryStartingSymbol = startingSymbol + "'";
         nonTerminals.add(temporaryStartingSymbol);
-        productions.add(new Production(temporaryStartingSymbol, temporaryStartingSymbol.substring(0, temporaryStartingSymbol.length() - 1)));
+        Map<List<String>, Integer> map = new HashMap<>();
+        map.put(Collections.singletonList(temporaryStartingSymbol.substring(0, temporaryStartingSymbol.length() - 1)), 0);
+        productions.add(new Production(temporaryStartingSymbol, map));
     }
 
     public void readGrammarFromFile() {
@@ -39,7 +41,9 @@ public class Grammar {
             //parse productions
             lines.forEach(line -> {
                 String[] sides = line.split("->");
-                Production production = new Production(sides[0], sides[1]);
+                Map<List<String>, Integer> map = new HashMap<>();
+                map.put(Arrays.asList(sides[1].split(" ")), -1);
+                Production production = new Production(sides[0].strip(), map);
                 productions.add(production);
             });
         } catch (IOException e) {

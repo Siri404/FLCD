@@ -1,12 +1,13 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 public class Production {
     private String lhs;
-    private String rhs;
+    private Map<List<String>, Integer> rhs;
 
-    Production(String lhs, String rhs){
+    Production(String lhs, Map<List<String>, Integer> rhs){
         this.lhs = lhs;
         this.rhs = rhs;
     }
@@ -20,11 +21,11 @@ public class Production {
         this.lhs = lhs;
     }
 
-    public String getRhs() {
+    public Map<List<String>, Integer> getRhs() {
         return rhs;
     }
 
-    public void setRhs(String rhs) {
+    public void setRhs(Map<List<String>, Integer> rhs) {
         this.rhs = rhs;
     }
 
