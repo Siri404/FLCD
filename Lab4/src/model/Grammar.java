@@ -9,22 +9,23 @@ public class Grammar {
     private Set<String> nonTerminals;
     private Set<String> terminals;
     private List<Production> productions;
+    private String temporaryStartingSymbol;
     private String startingSymbol;
 
-    public Grammar(){
+    public Grammar() {
         nonTerminals = new HashSet<>();
         terminals = new HashSet<>();
         productions = new ArrayList<>();
         readGrammarFromFile();
 
         //enrich the grammar
-        startingSymbol += "'";
-        nonTerminals.add(startingSymbol);
-        productions.add(new Production(startingSymbol, startingSymbol.substring(0, startingSymbol.length()-1)));
+        temporaryStartingSymbol = startingSymbol + "'";
+        nonTerminals.add(temporaryStartingSymbol);
+        productions.add(new Production(temporaryStartingSymbol, temporaryStartingSymbol.substring(0, temporaryStartingSymbol.length() - 1)));
     }
 
     public void readGrammarFromFile() {
-        try{
+        try {
             List<String> lines = Files.readAllLines(Paths.get("resources/grammar.txt"));
             nonTerminals.addAll(Arrays.asList(lines.get(0).split(" ")));
             startingSymbol = lines.get(1);
@@ -40,8 +41,8 @@ public class Grammar {
                 String[] sides = line.split("->");
                 Production production = new Production(sides[0], sides[1]);
                 productions.add(production);
-            } );
-        }catch (IOException e){
+            });
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -68,6 +69,14 @@ public class Grammar {
 
     public void setProductions(List<Production> productions) {
         this.productions = productions;
+    }
+
+    public String getTemporaryStartingSymbol() {
+        return temporaryStartingSymbol;
+    }
+
+    public void setTemporaryStartingSymbol(String temporaryStartingSymbol) {
+        this.temporaryStartingSymbol = temporaryStartingSymbol;
     }
 
     public String getStartingSymbol() {
