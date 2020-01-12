@@ -42,7 +42,7 @@ public class Grammar {
             lines.forEach(line -> {
                 String[] sides = line.split("->");
                 Map<List<String>, Integer> map = new HashMap<>();
-                map.put(Arrays.asList(sides[1].split(" ")), -1);
+                map.put(Arrays.asList(sides[1].split(" ")), 0);
                 Production production = new Production(sides[0].strip(), map);
                 productions.add(production);
             });

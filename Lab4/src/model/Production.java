@@ -7,7 +7,7 @@ public class Production {
     private String lhs;
     private Map<List<String>, Integer> rhs;
 
-    Production(String lhs, Map<List<String>, Integer> rhs){
+    public Production(String lhs, Map<List<String>, Integer> rhs){
         this.lhs = lhs;
         this.rhs = rhs;
     }

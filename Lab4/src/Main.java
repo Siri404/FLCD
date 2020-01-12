@@ -1,7 +1,6 @@
 import model.Pair;
 import model.Parser;
 import model.ParserException;
-
 import java.util.Map;
 
 public class Main {

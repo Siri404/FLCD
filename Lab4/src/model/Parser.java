@@ -34,12 +34,8 @@ public class Parser {
                     String elem = entry.getKey().get(pointIndex);
                     for (Production prod : grammar.getProductions()) {
                         if (elem.equals(prod.getLhs())) {
-                            //add the point at the beginning
-
-                            Map<List<String>, Integer> map = new HashMap<>();
-                            map.put(entry.getKey(), 0);
+                            Map<List<String>, Integer> map = new HashMap<>(prod.getRhs());
                             Production newProd = new Production(prod.getLhs(), map);
-                            entry.setValue(0);
                             if (!closure.contains(newProd)) {
                                 closure.add(newProd);
                                 notDone = true;
@@ -58,8 +54,11 @@ public class Parser {
             Integer pointIndex = entry.getValue();
             if (entry.getKey().indexOf(element) == pointIndex) {
                 //move the point
+                Map<List<String>, Integer> map = new HashMap<>(production.getRhs());
+                Production newProd = new Production(production.getLhs(), map);
+                entry = map.entrySet().iterator().next();
                 entry.setValue(entry.getValue() + 1);
-                return closure(production);
+                return closure(newProd);
             }
         }
         throw new ParserException("Invalid element passed to toGo function!");
@@ -132,7 +131,7 @@ public class Parser {
                 Map.Entry<List<String>, Integer> entry = production.getRhs().entrySet().iterator().next();
                 int pointIndex = entry.getValue();
                 //point before terminal/nonterminal
-                if (pointIndex != entry.getKey().size() - 1) {
+                if (pointIndex != entry.getKey().size()) {
                     //check for conflict
                     if (!action.equals("") && !action.equals("shift")) {
                         throw new ParserException("shift conflict!");
@@ -153,7 +152,7 @@ public class Parser {
                     else {
                         //find production number for reduce
                         for (int j = 0; j < grammar.getProductions().size() - 1; j++) {
-                            if (entry.getKey().equals(grammar.getProductions().get(j).getRhs())
+                            if (entry.getKey().equals(grammar.getProductions().get(j).getRhs().entrySet().iterator().next().getKey())
                                     && production.getLhs().equals(grammar.getProductions().get(j).getLhs())) {
                                 //check for conflict
                                 if (!action.equals("") && !action.equals("reduce" + (j + 1))) {
